@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context-4.0.xsd
+		http://www.springframework.org/schema/util 
+		http://www.springframework.org/schema/util/spring-util-4.0.xsd">
+		
+	<context:component-scan base-package="ca.crim.horcs" />
+	<context:property-placeholder
+		location="classpath:ca/crim/horcs/global.properties" />
+		
+	<bean id="logFactory" class="ca.crim.horcs.utils.log.LoggerBeanFactoryPostProcessor" />
+
+	<bean id="clientUserName" class="java.lang.String">
+		<constructor-arg value="${horcs.auth.client.user}" />
+	</bean>
+	
+	<bean id="clientPassword" class="java.lang.String">
+		<constructor-arg value="${horcs.auth.client.password}" />
+	</bean>
+	
+	<bean id="clientSalt" class="java.lang.String">
+		<constructor-arg value="${horcs.auth.client.salt}" />
+	</bean>
+
+	<bean id="jpakeAuthUrl" class="java.lang.String">
+		<constructor-arg value="${horcs.auth.url.jpake}" />
+	</bean>
+	
+	<bean id="stdAuthUrl" class="java.lang.String">
+		<constructor-arg value="${horcs.auth.url.std}" />
+	</bean>
+
+	<bean id="jerseyClient" class="com.sun.jersey.api.client.Client"
+		factory-bean="jerseyClientFactory" factory-method="makeJerseyClient" />
+
+
+
+
+</beans>
