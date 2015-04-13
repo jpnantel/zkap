@@ -8,37 +8,30 @@
 		http://www.springframework.org/schema/context/spring-context-4.0.xsd
 		http://www.springframework.org/schema/util 
 		http://www.springframework.org/schema/util/spring-util-4.0.xsd">
-		
-	<context:component-scan base-package="ca.crim.horcs" />
+    
+	<context:component-scan base-package="ca.jp.secproj" />
 	<context:property-placeholder
-		location="classpath:ca/crim/horcs/global.properties" />
-		
-	<bean id="logFactory" class="ca.crim.horcs.utils.log.LoggerBeanFactoryPostProcessor" />
+		location="classpath:ca/jp/secproj/global.properties" />
 
-	<bean id="clientUserName" class="java.lang.String">
-		<constructor-arg value="${horcs.auth.client.user}" />
+	<bean id="logFactory" class="ca.jp.secproj.utils.log.LoggerBeanFactoryPostProcessor" />
+
+	<bean id="serverURL" class="java.lang.String">
+		<constructor-arg value="${ca.jp.secproj.server.url}" />
 	</bean>
 	
-	<bean id="clientPassword" class="java.lang.String">
-		<constructor-arg value="${horcs.auth.client.password}" />
+	<bean id="jPakePath" class="java.lang.String">
+		<constructor-arg value="${ca.jp.secproj.server.jpakepath}" />
 	</bean>
 	
-	<bean id="clientSalt" class="java.lang.String">
-		<constructor-arg value="${horcs.auth.client.salt}" />
+	<bean id="oraclePath" class="java.lang.String">
+		<constructor-arg value="${ca.jp.secproj.server.oraclepath}" />
 	</bean>
 
-	<bean id="jpakeAuthUrl" class="java.lang.String">
-		<constructor-arg value="${horcs.auth.url.jpake}" />
-	</bean>
-	
-	<bean id="stdAuthUrl" class="java.lang.String">
-		<constructor-arg value="${horcs.auth.url.std}" />
+	<bean id="stdAuthPath" class="java.lang.String">
+		<constructor-arg value="${ca.jp.secproj.server.stdauthpath}" />
 	</bean>
 
 	<bean id="jerseyClient" class="com.sun.jersey.api.client.Client"
 		factory-bean="jerseyClientFactory" factory-method="makeJerseyClient" />
-
-
-
 
 </beans>
