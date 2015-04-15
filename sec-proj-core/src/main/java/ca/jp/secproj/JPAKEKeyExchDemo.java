@@ -13,10 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ca.jp.secproj.utils.crypto.symkey.AESUtils;
-import ca.jp.secproj.utils.crypto.zka.JPAKEKeyAgreementHelper;
-import ca.jp.secproj.utils.crypto.zka.JPAKERound1PayloadDTO;
-import ca.jp.secproj.utils.crypto.zka.JPAKERound2PayloadDTO;
-import ca.jp.secproj.utils.crypto.zka.JPAKERound3PayloadDTO;
+import ca.jp.secproj.utils.crypto.zka.jpake.JPAKEKeyAgreementHelper;
+import ca.jp.secproj.utils.crypto.zka.jpake.JPAKERound1PayloadDTO;
+import ca.jp.secproj.utils.crypto.zka.jpake.JPAKERound2PayloadDTO;
+import ca.jp.secproj.utils.crypto.zka.jpake.JPAKERound3PayloadDTO;
 import ca.jp.secproj.utils.log.Loggable;
 import ca.jp.secproj.utils.net.ConnectionClientHelper;
 

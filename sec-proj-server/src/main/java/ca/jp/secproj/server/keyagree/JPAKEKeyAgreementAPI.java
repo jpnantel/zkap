@@ -21,10 +21,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.jp.secproj.server.persistence.IUserDb;
-import ca.jp.secproj.utils.crypto.zka.JPAKEKeyAgreementHelper;
-import ca.jp.secproj.utils.crypto.zka.JPAKERound1PayloadDTO;
-import ca.jp.secproj.utils.crypto.zka.JPAKERound2PayloadDTO;
-import ca.jp.secproj.utils.crypto.zka.JPAKERound3PayloadDTO;
+import ca.jp.secproj.utils.crypto.zka.jpake.JPAKEKeyAgreementHelper;
+import ca.jp.secproj.utils.crypto.zka.jpake.JPAKERound1PayloadDTO;
+import ca.jp.secproj.utils.crypto.zka.jpake.JPAKERound2PayloadDTO;
+import ca.jp.secproj.utils.crypto.zka.jpake.JPAKERound3PayloadDTO;
 
 @Path("/keyagree/jpake")
 public class JPAKEKeyAgreementAPI {
