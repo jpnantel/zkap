@@ -1,4 +1,4 @@
-package ca.jp.secproj.utils.crypto.zka.jpake;
+package ca.jp.secproj.crypto.zka.jpake;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;

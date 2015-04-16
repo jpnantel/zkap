@@ -1,10 +1,10 @@
-package ca.jp.secproj.utils.crypto.zka.jpake;
+package ca.jp.secproj.crypto.zka.jpake;
 
 import java.math.BigInteger;
 
 import org.bouncycastle.crypto.agreement.jpake.JPAKERound1Payload;
 
-import ca.jp.secproj.utils.crypto.BigIntegerUtils;
+import ca.jp.secproj.crypto.BigIntegerUtils;
 
 /**
  * 

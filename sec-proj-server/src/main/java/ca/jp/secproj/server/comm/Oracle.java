@@ -13,9 +13,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.jp.secproj.crypto.symkey.AESUtils;
 import ca.jp.secproj.server.keyagree.JPAKEKeyAgreementAPI;
 import ca.jp.secproj.server.persistence.IUserDb;
-import ca.jp.secproj.utils.crypto.symkey.AESUtils;
 
 @Path("/comm/oracle")
 public class Oracle {

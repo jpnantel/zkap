@@ -1,8 +1,9 @@
-package ca.jp.secproj.utils.crypto.zka.ffs;
+package ca.jp.secproj.crypto.zka.ffs;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +27,19 @@ public class FFSAuthArbitrator {
 
     private static final int MAX_NB_ROUNDS = 256;
 
+    /**
+     * Identifier of the prover
+     */
+    private String proverId;
+
+    /**
+     * Identifier of the validator
+     */
+    private String validatorId;
+
+    /**
+     * User's secret password as a big integer
+     */
     private BigInteger secret;
 
     private int nbRounds;
@@ -44,7 +58,10 @@ public class FFSAuthArbitrator {
      *            A numer of rounds required to consider authentication a
      *            success between 64 and 256
      */
-    public FFSAuthArbitrator(byte[] passphrase, int nbRounds) {
+    public FFSAuthArbitrator(String proverId, String validatorId, byte[] passphrase, int nbRounds) {
+	if (StringUtils.isBlank(proverId) || StringUtils.isBlank(validatorId)) {
+	    throw new IllegalArgumentException("Invalid prover id or validator id");
+	}
 	if (passphrase == null || passphrase.length < 16 || passphrase.length > 256) {
 	    throw new IllegalArgumentException(
 		    "Invalid passphrase: null or inapropriate lenght (between 16 and 256; 128 and 20148 bits)");
@@ -59,10 +76,18 @@ public class FFSAuthArbitrator {
 	    this.nbRounds = MAX_NB_ROUNDS;
 	    logger.warn("Invalid number of rounds (" + nbRounds + ") supplied. Using max value " + MAX_NB_ROUNDS);
 	}
+	this.proverId = proverId;
+	this.validatorId = validatorId;
 	this.secret = new BigInteger(passphrase);
 	this.random = new SecureRandom();
     }
 
+    /**
+     * Generates the required parameters for Feige Fiat Shamir protocol
+     * 
+     * @return A FFSSetup object containing all required parameters to initiate
+     *         the first authentication
+     */
     public FFSSetup GenerateFFSSetup() {
 	BigInteger n = null;
 
@@ -92,7 +117,7 @@ public class FFSAuthArbitrator {
 
 	BigInteger t = secret.modPow(TWO, n);
 
-	return new FFSSetup(n, nbRounds, t);
+	return new FFSSetup(proverId, validatorId, n, nbRounds, t);
     }
 
 }

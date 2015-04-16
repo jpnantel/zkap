@@ -1,4 +1,4 @@
-package ca.jp.secproj.utils.crypto;
+package ca.jp.secproj.crypto;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;

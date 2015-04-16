@@ -1,4 +1,4 @@
-package ca.jp.secproj.utils.crypto.symkey;
+package ca.jp.secproj.crypto.symkey;
 
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
