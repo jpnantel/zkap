@@ -3,6 +3,7 @@ package ca.jp.secproj;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.ParseException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.crypto.agreement.jpake.JPAKERound1Payload;
@@ -115,7 +116,7 @@ public class JPAKEKeyExchDemo implements SecProjExecutable {
 		    new JPAKERound1PayloadDTO(clientRound1Payload), JPAKERound1PayloadDTO.class,
 		    serverURL + jPakePath + "/firstround", jAuth.getUsername()).createPayload();
 	    logger.info("Server round 1 payload received successfully. ");
-	} catch (IOException e) {
+	} catch (IOException | ParseException e) {
 	    logger.error("Round 1 server validation error. ", e);
 	    return false;
 	}
@@ -157,7 +158,7 @@ public class JPAKEKeyExchDemo implements SecProjExecutable {
 		    new JPAKERound2PayloadDTO(clientRound2Payload), JPAKERound2PayloadDTO.class,
 		    serverURL + jPakePath + "/secondround", jAuth.getUsername()).createPayload();
 	    logger.info("Server round 2 payload received successfully. ");
-	} catch (IOException e) {
+	} catch (IOException | ParseException e) {
 	    logger.error("Round 2 server validation error. ", e);
 	    return false;
 	}

@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.SecureRandom;
+import java.text.ParseException;
 
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.agreement.jpake.JPAKEParticipant;
@@ -49,7 +50,7 @@ public class JPakeSerializeTest {
 
 	    JPAKERound1Payload testPL = testPLD.createPayload();
 	    testPL.getGx1();
-	} catch (IOException e1) {
+	} catch (IOException | ParseException e1) {
 	    logger.error("", e1);
 	    Assert.fail("Exception thrown!");
 	}

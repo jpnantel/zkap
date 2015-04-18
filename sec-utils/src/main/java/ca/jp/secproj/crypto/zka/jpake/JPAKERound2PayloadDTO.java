@@ -1,10 +1,11 @@
 package ca.jp.secproj.crypto.zka.jpake;
 
 import java.math.BigInteger;
+import java.text.ParseException;
 
 import org.bouncycastle.crypto.agreement.jpake.JPAKERound2Payload;
 
-import ca.jp.secproj.crypto.BigIntegerUtils;
+import ca.jp.secproj.utils.math.BigIntegerUtils;
 
 public class JPAKERound2PayloadDTO {
 
@@ -21,6 +22,10 @@ public class JPAKERound2PayloadDTO {
 	this.participantId = payload.getParticipantId();
 	this.a = payload.getA().toString();
 	this.kpsx2 = BigIntegerUtils.BigIntArrayToString(payload.getKnowledgeProofForX2s());
+    }
+
+    public JPAKERound2Payload createPayload() throws ParseException {
+	return new JPAKERound2Payload(participantId, new BigInteger(a), BigIntegerUtils.StringArrayToBigInt(kpsx2));
     }
 
     public String getParticipantId() {
@@ -45,10 +50,6 @@ public class JPAKERound2PayloadDTO {
 
     public void setKpsx2(String[] kpsx2) {
 	this.kpsx2 = kpsx2;
-    }
-
-    public JPAKERound2Payload createPayload() {
-	return new JPAKERound2Payload(participantId, new BigInteger(a), BigIntegerUtils.StringArrayToBigInt(kpsx2));
     }
 
 }

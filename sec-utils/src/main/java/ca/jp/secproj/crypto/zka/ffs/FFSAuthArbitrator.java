@@ -7,6 +7,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.jp.secproj.crypto.zka.ffs.dto.FFSSetupDTO;
+
 /**
  * Setup manager for FFS: this class acts as the trusted third party
  * 
@@ -42,7 +44,28 @@ public class FFSAuthArbitrator {
      */
     private BigInteger secret;
 
+    /**
+     * Number of rounds of FFS to execute (essentially the lenght of all
+     * vectors: commitment, witness, challenge and response). There is a chance
+     * = 1 / (2^nbRounds) that the prover can fool the validator without the
+     * valid secret.
+     */
     private int nbRounds;
+
+    /**
+     * Large number such that n= p*q, p and q being large prime numbers
+     */
+    private BigInteger n;
+
+    /**
+     * Prover's public key
+     */
+    private BigInteger publicKey;
+
+    /**
+     * Setup data to be sent to a trusted third party for registration
+     */
+    private FFSSetupDTO setup;
 
     /**
      * Initialize the setup generator with a byte array representing a secret
@@ -88,36 +111,38 @@ public class FFSAuthArbitrator {
      * @return A FFSSetup object containing all required parameters to initiate
      *         the first authentication
      */
-    public FFSSetup GenerateFFSSetup() {
-	BigInteger n = null;
+    public FFSSetupDTO GenerateFFSSetup() {
 
-	BigInteger p = null;
-	BigInteger q = null;
+	// Generate n if it was not previously done
+	if (setup == null) {
+	    BigInteger p = null;
+	    BigInteger q = null;
+	    int iterNbr = 0;
+	    boolean nMeetsRequirements = false;
+	    // Repeat the generation of n while the user's password and
+	    while (!nMeetsRequirements && ++iterNbr <= 100) {
+		p = BigInteger.probablePrime(NB_BITS, random);
+		q = BigInteger.probablePrime(NB_BITS, random);
 
-	int iterNbr = 0;
-	boolean nMeetsRequirements = false;
-	// Repeat the generation of n while the user's password and
-	while (!nMeetsRequirements && ++iterNbr <= 100) {
-	    p = BigInteger.probablePrime(NB_BITS, random);
-	    q = BigInteger.probablePrime(NB_BITS, random);
+		n = p.multiply(q);
 
-	    n = p.multiply(q);
-
-	    // Ensure n and secret are coprimes and that n > secret
-	    if (n.gcd(secret).equals(BigInteger.ONE) && n.compareTo(secret) == 1) {
-		nMeetsRequirements = true;
-	    } else {
-		n = null;
+		// Ensure n and secret are coprimes and that n > secret
+		if (n.gcd(secret).equals(BigInteger.ONE) && n.compareTo(secret) == 1) {
+		    nMeetsRequirements = true;
+		} else {
+		    n = null;
+		}
 	    }
-	}
-	if (n == null) {
-	    logger.warn("Unable to find n coprime with supplied passphrase");
-	    return null;
-	}
+	    if (n == null) {
+		logger.warn("Unable to find n coprime with supplied passphrase");
+		return null;
+	    }
+	    publicKey = secret.modPow(TWO, n);
 
-	BigInteger t = secret.modPow(TWO, n);
-
-	return new FFSSetup(proverId, validatorId, n, nbRounds, t);
+	    this.setup = new FFSSetupDTO(proverId, validatorId, this.n.toString(), this.nbRounds,
+		    this.publicKey.toString());
+	}
+	return this.setup;
     }
 
 }
