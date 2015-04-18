@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.text.ParseException;
 
 import org.bouncycastle.crypto.agreement.jpake.JPAKERound1Payload;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 import ca.jp.secproj.utils.math.BigIntegerUtils;
 
@@ -36,6 +37,7 @@ public class JPAKERound1PayloadDTO {
 	this.knowledgeProofForX2 = BigIntegerUtils.BigIntArrayToString(payload.getKnowledgeProofForX2());
     }
 
+    @JsonIgnore
     public JPAKERound1Payload createPayload() throws ParseException {
 	return new JPAKERound1Payload(participantId, new BigInteger(gx1), new BigInteger(gx2),
 		BigIntegerUtils.StringArrayToBigInt(this.knowledgeProofForX1),

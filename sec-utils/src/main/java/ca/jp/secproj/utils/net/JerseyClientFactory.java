@@ -21,6 +21,11 @@ import com.sun.jersey.client.urlconnection.HTTPSProperties;
 import com.sun.jersey.client.urlconnection.HttpURLConnectionFactory;
 import com.sun.jersey.client.urlconnection.URLConnectionClientHandler;
 
+/**
+ * 
+ * @author Jean-Philippe Nantel
+ *
+ */
 public class JerseyClientFactory {
 
     private static Logger logger = LoggerFactory.getLogger(JerseyClientFactory.class);

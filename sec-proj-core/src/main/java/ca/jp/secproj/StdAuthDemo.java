@@ -14,6 +14,11 @@ import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.util.Base64;
 
+/**
+ * 
+ * @author Jean-Philippe Nantel
+ *
+ */
 @Loggable
 @Component("StdAuthDemo")
 public class StdAuthDemo implements SecProjExecutable {

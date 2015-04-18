@@ -17,16 +17,32 @@ import ca.jp.secproj.crypto.symkey.AESUtils;
 import ca.jp.secproj.server.keyagree.JPAKEKeyAgreementAPI;
 import ca.jp.secproj.server.persistence.IUserDb;
 
+/**
+ * Toy service API used to demonstrate a successful key exchange. Exposes the
+ * "query oracle" service.
+ * 
+ * @author Jean-Philippe Nantel
+ *
+ */
 @Path("/comm/oracle")
 public class Oracle {
 
     private static Logger logger = LoggerFactory.getLogger(JPAKEKeyAgreementAPI.class);
 
+    /**
+     * Injected reference to the user persistence manager
+     */
     private IUserDb userDb;
 
-    public Oracle() {
-    }
-
+    /**
+     * Query oracle service that, given a common AES-128 key, deciphers the
+     * senders message, wraps it into its own message, reciphers it and then
+     * sends it.
+     * 
+     * @param message
+     * @param user
+     * @return
+     */
     @Path("/query")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -42,7 +58,7 @@ public class Oracle {
 		logger.info("No message supplied. ");
 		return Response.status(Status.NO_CONTENT).entity("No message supplied. ").build();
 	    }
-	    byte[] userKey = userDb.getSecretKey(user);
+	    byte[] userKey = userDb.getJPAKENegotiatedSecretKey(user);
 	    if (userKey == null) {
 		logger.info("Unable to retrieve shared secret key from datastore. ");
 		return Response.status(Status.INTERNAL_SERVER_ERROR)

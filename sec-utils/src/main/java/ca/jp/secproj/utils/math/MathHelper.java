@@ -4,6 +4,11 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Random;
 
+/**
+ * 
+ * @author Jean-Philippe Nantel
+ *
+ */
 public class MathHelper {
 
     public static String generateUniqueToken() {

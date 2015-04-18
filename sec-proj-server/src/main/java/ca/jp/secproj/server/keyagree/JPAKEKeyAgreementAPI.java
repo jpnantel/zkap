@@ -26,6 +26,14 @@ import ca.jp.secproj.crypto.zka.jpake.JPAKERound2PayloadDTO;
 import ca.jp.secproj.crypto.zka.jpake.JPAKERound3PayloadDTO;
 import ca.jp.secproj.server.persistence.IUserDb;
 
+/**
+ * JPAKE key exchange service bean. Exposes services for the initial
+ * registration of a user, and required services for a sucessful JPAKE key
+ * exchange.
+ * 
+ * @author Jean-Philippe Nantel
+ *
+ */
 @Path("/keyagree/jpake")
 public class JPAKEKeyAgreementAPI {
 
@@ -37,13 +45,14 @@ public class JPAKEKeyAgreementAPI {
 
     private Map<String, Long> jPakeKAHelperTTL;
 
+    /**
+     * Injected reference to the user persistence manager
+     */
     private IUserDb userDb;
 
     public JPAKEKeyAgreementAPI() {
-
 	this.jPakeKAHelper = new HashMap<>();
 	this.jPakeKAHelperTTL = new HashMap<>();
-
     }
 
     @Path("/savesecret")
@@ -172,7 +181,7 @@ public class JPAKEKeyAgreementAPI {
 	    jPakeKAHelper.remove(user);
 	    jPakeKAHelperTTL.remove(user);
 
-	    userDb.setSecretKey(user, kaHelper.getRawAES128Key());
+	    userDb.setJPAKENegotiatedSecretKey(user, kaHelper.getRawAES128Key());
 
 	    return Response.status(Status.OK).entity(new JPAKERound3PayloadDTO(serverRound3Payload)).build();
 	} catch (Exception e) {

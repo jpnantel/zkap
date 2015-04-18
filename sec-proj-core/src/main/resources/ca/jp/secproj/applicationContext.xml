@@ -18,6 +18,10 @@
 	<bean id="serverURL" class="java.lang.String">
 		<constructor-arg value="${ca.jp.secproj.server.url}" />
 	</bean>
+	
+	<bean id="serverId" class="java.lang.String">
+		<constructor-arg value="${ca.jp.secproj.server.id}" />
+	</bean>
 
 	<bean id="jPakePath" class="java.lang.String">
 		<constructor-arg value="${ca.jp.secproj.server.jpakepath}" />
@@ -29,6 +33,10 @@
 
 	<bean id="stdAuthPath" class="java.lang.String">
 		<constructor-arg value="${ca.jp.secproj.server.stdauthpath}" />
+	</bean>
+	
+	<bean id="ffsPath" class="java.lang.String">
+		<constructor-arg value="${ca.jp.secproj.server.ffspath}" />
 	</bean>
 
 	<bean id="jerseyClientFactory" class="ca.jp.secproj.utils.net.JerseyClientFactory">

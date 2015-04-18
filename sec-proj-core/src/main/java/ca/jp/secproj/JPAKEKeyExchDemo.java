@@ -23,6 +23,11 @@ import ca.jp.secproj.utils.net.ConnectionClientHelper;
 
 import com.sun.jersey.api.client.Client;
 
+/**
+ * 
+ * @author Jean-Philippe Nantel
+ *
+ */
 @Loggable
 @Component("jPakeKeyExchDemo")
 public class JPAKEKeyExchDemo implements SecProjExecutable {

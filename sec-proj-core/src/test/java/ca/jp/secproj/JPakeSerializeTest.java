@@ -25,7 +25,7 @@ public class JPakeSerializeTest {
     private static Logger logger = LoggerFactory.getLogger(JPakeSerializeTest.class);
 
     @Test
-    public void JPakePayloadSerializeAndDeserializeTest() {
+    public void jPakePayloadSerializeAndDeserializeTest() {
 
 	JPAKEPrimeOrderGroup group = JPAKEPrimeOrderGroups.NIST_3072;
 	Digest digest = new SHA256Digest();

@@ -5,6 +5,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+/**
+ * 
+ * @author Jean-Philippe Nantel
+ *
+ */
 public class Main {
 
     private final static Logger logger = LoggerFactory.getLogger(Main.class);
@@ -17,7 +22,7 @@ public class Main {
      */
     public static void main(String[] args) {
 
-	System.setProperty("javax.net.debug", "all");
+	// System.setProperty("javax.net.debug", "all");
 
 	String componentToRun;
 	String user;

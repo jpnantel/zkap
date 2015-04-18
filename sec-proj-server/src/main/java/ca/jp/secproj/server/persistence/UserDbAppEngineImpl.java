@@ -6,6 +6,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.jp.secproj.crypto.zka.ffs.dto.FFSSetupDTO;
+
 import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -19,7 +21,7 @@ import com.google.appengine.api.datastore.Text;
  * Implementation of the User database facade for the google appengine
  * datastore.
  * 
- * @author Jean-Philippe
+ * @author Jean-Philippe Nantel
  *
  */
 public class UserDbAppEngineImpl implements IUserDb {
@@ -28,9 +30,17 @@ public class UserDbAppEngineImpl implements IUserDb {
 
     private final static String USER_ENTITY_NAME = "User";
 
-    private final static String USER_SECRET_PASS_PPTY = "secretpass";
+    private final static String USER_SECRET_PASS_JPAKE_PPTY = "JPAKESecretPass";
 
-    private final static String USER_SECRET_KEY_PPTY = "secretkey";
+    private final static String USER_SECRET_KEY_JPAKE_PPTY = "JPAKENegotiatedSecretSymKey";
+
+    private final static String USER_FFS_N_PPTY = "FFSN";
+
+    private final static String USER_FFS_NBROUNDS_PPTY = "FFSNbRounds";
+
+    private final static String USER_FFS_PUBLICKEY_PPTY = "FFSPublicKey";
+
+    private String serverId;
 
     private DatastoreService datastore;
 
@@ -50,7 +60,7 @@ public class UserDbAppEngineImpl implements IUserDb {
 	    logger.info("Error getting entity in the store. ", e);
 	    return null;
 	}
-	Text secretPass = (Text) user.getProperty(USER_SECRET_PASS_PPTY);
+	Text secretPass = (Text) user.getProperty(USER_SECRET_PASS_JPAKE_PPTY);
 	return secretPass.getValue();
     }
 
@@ -58,7 +68,7 @@ public class UserDbAppEngineImpl implements IUserDb {
      * Retrieves the secret key (for AES) stored in the datastore for the
      * specified user
      */
-    public byte[] getSecretKey(String username) {
+    public byte[] getJPAKENegotiatedSecretKey(String username) {
 	Entity user;
 	try {
 	    user = getUser(username);
@@ -66,22 +76,52 @@ public class UserDbAppEngineImpl implements IUserDb {
 	    logger.info("Error getting entity in the store. ", e);
 	    return null;
 	}
-	Blob secretKey = (Blob) user.getProperty(USER_SECRET_KEY_PPTY);
+	Blob secretKey = (Blob) user.getProperty(USER_SECRET_KEY_JPAKE_PPTY);
 	return secretKey.getBytes();
+    }
+
+    /**
+     * Retrieve a FFS setup previously registered
+     * 
+     * @param username
+     * @return
+     * @throws IOException
+     */
+    public FFSSetupDTO getFFSSetup(String username) throws IOException {
+	Entity user;
+	try {
+	    user = getUser(username);
+	} catch (EntityNotFoundException e) {
+	    logger.info("Error getting entity in the store. ", e);
+	    return null;
+	}
+	Text n = (Text) user.getProperty(USER_FFS_N_PPTY);
+	Long tempNbRounds = (Long) user.getProperty(USER_FFS_NBROUNDS_PPTY);
+	int nbRounds = tempNbRounds.intValue();
+	Text publicKey = (Text) user.getProperty(USER_FFS_PUBLICKEY_PPTY);
+
+	return new FFSSetupDTO(username, serverId, n.getValue(), nbRounds, publicKey.getValue());
     }
 
     /**
      * Saves the secret passphrase in the datastore for the specified user
      */
     public void setJPAKESecret(String username, String secretPass) throws IOException {
-	saveUser(username, secretPass, null);
+	saveUser(username, secretPass, null, null, null, null);
     }
 
     /**
      * Saves the secret key (for AES) in the datastore for the specified user
      */
-    public void setSecretKey(String username, byte[] secretKey) {
-	saveUser(username, null, secretKey);
+    public void setJPAKENegotiatedSecretKey(String username, byte[] secretKey) {
+	saveUser(username, null, secretKey, null, null, null);
+    }
+
+    /**
+     * Saves the secret key (for AES) in the datastore for the specified user
+     */
+    public void setFFSSetup(FFSSetupDTO setup) {
+	saveUser(setup.getProverId(), null, null, setup.getN(), setup.getNbRounds(), setup.getPublicKey());
     }
 
     /**
@@ -100,10 +140,11 @@ public class UserDbAppEngineImpl implements IUserDb {
      * Internal method used to save user data
      * 
      * @param username
-     * @param secretPass
-     * @param secretKey
+     * @param jpakePassword
+     * @param jpakeNegoSecretSymKey
      */
-    private void saveUser(String username, String secretPass, byte[] secretKey) {
+    private void saveUser(String username, String jpakePassword, byte[] jpakeNegoSecretSymKey, String FFSN,
+	    Integer FFSNbRounds, String FFSPublicKey) {
 	Entity user = null;
 	try {
 	    user = getUser(username);
@@ -113,12 +154,30 @@ public class UserDbAppEngineImpl implements IUserDb {
 	if (user == null) {
 	    user = new Entity(USER_ENTITY_NAME, username);
 	}
-	if (!StringUtils.isBlank(secretPass)) {
-	    user.setProperty(USER_SECRET_PASS_PPTY, new Text(secretPass));
+	if (!StringUtils.isBlank(jpakePassword)) {
+	    user.setProperty(USER_SECRET_PASS_JPAKE_PPTY, new Text(jpakePassword));
 	}
-	if (secretKey != null) {
-	    user.setProperty(USER_SECRET_KEY_PPTY, new Blob(secretKey));
+	if (jpakeNegoSecretSymKey != null) {
+	    user.setProperty(USER_SECRET_KEY_JPAKE_PPTY, new Blob(jpakeNegoSecretSymKey));
+	}
+	if (!StringUtils.isBlank(FFSN)) {
+	    user.setProperty(USER_FFS_N_PPTY, new Text(FFSN));
+	}
+	if (FFSNbRounds != null) {
+	    user.setProperty(USER_FFS_NBROUNDS_PPTY, FFSNbRounds);
+	}
+	if (!StringUtils.isBlank(FFSPublicKey)) {
+	    user.setProperty(USER_FFS_PUBLICKEY_PPTY, new Text(FFSPublicKey));
 	}
 	datastore.put(user);
     }
+
+    public String getServerId() {
+	return serverId;
+    }
+
+    public void setServerId(String serverId) {
+	this.serverId = serverId;
+    }
+
 }

@@ -10,10 +10,17 @@
 		http://www.springframework.org/schema/util/spring-util-4.0.xsd">
 
 
-	<bean id="UserDbBean" class="ca.jp.secproj.server.persistence.UserDbAppEngineImpl" />
+	<bean id="UserDbBean" class="ca.jp.secproj.server.persistence.UserDbAppEngineImpl">
+		<property name="serverId" value="gei775-sec-proj" />
+	</bean>
 
 	<bean id="JPakeKeyAgreeServiceBean" class="ca.jp.secproj.server.keyagree.JPAKEKeyAgreementAPI">
 		<property name="userDb" ref="UserDbBean" />
+	</bean>
+
+	<bean id="FFSAuthServiceBean" class="ca.jp.secproj.server.auth.FFSAuthAPI">
+		<property name="userDb" ref="UserDbBean" />
+		<property name="serverId" value="gei775-sec-proj" />
 	</bean>
 
 	<bean id="OracleBean" class="ca.jp.secproj.server.comm.Oracle">

@@ -4,9 +4,15 @@ import java.math.BigInteger;
 import java.text.ParseException;
 
 import org.bouncycastle.crypto.agreement.jpake.JPAKERound2Payload;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 import ca.jp.secproj.utils.math.BigIntegerUtils;
 
+/**
+ * 
+ * @author Jean-Philippe Nantel
+ *
+ */
 public class JPAKERound2PayloadDTO {
 
     private String participantId;
@@ -24,6 +30,7 @@ public class JPAKERound2PayloadDTO {
 	this.kpsx2 = BigIntegerUtils.BigIntArrayToString(payload.getKnowledgeProofForX2s());
     }
 
+    @JsonIgnore
     public JPAKERound2Payload createPayload() throws ParseException {
 	return new JPAKERound2Payload(participantId, new BigInteger(a), BigIntegerUtils.StringArrayToBigInt(kpsx2));
     }

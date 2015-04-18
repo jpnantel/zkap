@@ -11,6 +11,11 @@ import ca.jp.secproj.crypto.zka.ffs.dto.FFSRound1DTO;
 import ca.jp.secproj.crypto.zka.ffs.dto.FFSRound2DTO;
 import ca.jp.secproj.crypto.zka.ffs.dto.FFSRound3DTO;
 
+/**
+ * 
+ * @author Jean-Philippe Nantel
+ *
+ */
 public class FFSValidator {
 
     private static Logger logger = LoggerFactory.getLogger(FFSValidator.class);
@@ -63,13 +68,13 @@ public class FFSValidator {
      * @param nbRounds
      * @param publicKey
      */
-    public FFSValidator(String proverId, String validatorId, BigInteger n, int nbRounds, BigInteger publicKey) {
+    public FFSValidator(String proverId, String validatorId, String n, int nbRounds, String publicKey) {
 	super();
 	this.proverId = proverId;
 	this.validatorId = validatorId;
-	this.n = n;
+	this.n = new BigInteger(n);
 	this.nbRounds = nbRounds;
-	this.publicKey = publicKey;
+	this.publicKey = new BigInteger(publicKey);
     }
 
     /**
@@ -125,11 +130,11 @@ public class FFSValidator {
 	for (int i = 0; i < nbRounds; i++) {
 	    BigInteger r_2 = r[i].modPow(TWO, n);
 	    if (challenge[i]) {
-		if (r_2 != w[i].multiply(publicKey).mod(n)) {
+		if (!r_2.equals(w[i].multiply(publicKey).mod(n))) {
 		    return false;
 		}
 	    } else {
-		if (r_2 != w[i]) {
+		if (!r_2.equals(w[i])) {
 		    return false;
 		}
 	    }

@@ -11,7 +11,7 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
  * Classe pour traiter les annotations loggable pour l'injection d'un logger
  * slf4j.
  * 
- * @author nanteljp
+ * @author Jean-Philippe Nantel
  * 
  */
 public class LoggerBeanFactoryPostProcessor implements BeanPostProcessor {

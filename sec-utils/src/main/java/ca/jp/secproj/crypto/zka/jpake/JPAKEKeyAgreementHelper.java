@@ -6,8 +6,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
-import javax.crypto.spec.SecretKeySpec;
-
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.agreement.jpake.JPAKEParticipant;
@@ -20,6 +18,11 @@ import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 
+ * @author Jean-Philippe Nantel
+ *
+ */
 public class JPAKEKeyAgreementHelper {
 
     private static Logger logger = LoggerFactory.getLogger(JPAKEKeyAgreementHelper.class);
@@ -33,8 +36,6 @@ public class JPAKEKeyAgreementHelper {
     private JPAKEParticipant participant;
 
     private BigInteger keyingMaterial;
-
-    private SecretKeySpec aesKey;
 
     private byte[] rawAESKey;
 

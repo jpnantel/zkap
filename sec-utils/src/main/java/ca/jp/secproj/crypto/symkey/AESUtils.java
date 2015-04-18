@@ -15,6 +15,11 @@ import org.slf4j.LoggerFactory;
 
 import com.sun.jersey.core.util.Base64;
 
+/**
+ * 
+ * @author Jean-Philippe Nantel
+ *
+ */
 public class AESUtils {
 
     private static Logger logger = LoggerFactory.getLogger(AESUtils.class);

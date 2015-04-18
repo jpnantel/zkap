@@ -12,7 +12,7 @@ import ca.jp.secproj.utils.math.BigIntegerUtils;
  * Class responsible of executing all the required computation on the prover
  * side for Feige-Fiat-Shamir
  * 
- * @author Jean-Philippe
+ * @author Jean-Philippe Nantel
  *
  */
 public class FFSProver {
@@ -70,19 +70,20 @@ public class FFSProver {
      * 
      * @param setup
      */
-    public FFSProver(String proverId, String validatorId, BigInteger n, int nbRounds, BigInteger privateKey) {
+    public FFSProver(String proverId, String validatorId, String n, int nbRounds, byte[] privateKey) {
 	this.proverId = proverId;
 	this.validatorId = validatorId;
-	this.n = n;
+	this.n = new BigInteger(n);
 	this.nbRounds = nbRounds;
-	this.privateKey = privateKey;
+	this.privateKey = new BigInteger(privateKey);
 	this.m = new BigInteger[nbRounds];
 	this.w = new BigInteger[nbRounds];
 	this.random = new SecureRandom();
     }
 
     /**
-     * Get the first round 
+     * Get the first round
+     * 
      * @return
      */
     public FFSRound1DTO getWitness() {

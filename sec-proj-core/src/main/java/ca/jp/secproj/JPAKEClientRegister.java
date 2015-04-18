@@ -11,9 +11,14 @@ import ca.jp.secproj.utils.net.ConnectionClientHelper;
 
 import com.sun.jersey.api.client.Client;
 
+/**
+ * 
+ * @author Jean-Philippe Nantel
+ *
+ */
 @Loggable
-@Component("sendSecretToServer")
-public class SendSecretToServer implements SecProjExecutable {
+@Component("JPAKEClientRegister")
+public class JPAKEClientRegister implements SecProjExecutable {
 
     private static Logger logger;
 

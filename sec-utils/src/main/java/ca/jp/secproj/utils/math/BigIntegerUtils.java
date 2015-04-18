@@ -4,6 +4,11 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.text.ParseException;
 
+/**
+ * 
+ * @author Jean-Philippe Nantel
+ *
+ */
 public class BigIntegerUtils {
 
     /**

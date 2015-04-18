@@ -1,5 +1,10 @@
 package ca.jp.secproj.crypto.zka.ffs.dto;
 
+/**
+ * 
+ * @author Jean-Philippe Nantel
+ *
+ */
 public class FFSDTOBase {
 
     /**

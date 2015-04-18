@@ -40,9 +40,9 @@ public class FFSAuthArbitrator {
     private String validatorId;
 
     /**
-     * User's secret password as a big integer
+     * User's private key as a big integer
      */
-    private BigInteger secret;
+    private BigInteger privateKey;
 
     /**
      * Number of rounds of FFS to execute (essentially the lenght of all
@@ -81,11 +81,11 @@ public class FFSAuthArbitrator {
      *            A numer of rounds required to consider authentication a
      *            success between 64 and 256
      */
-    public FFSAuthArbitrator(String proverId, String validatorId, byte[] passphrase, int nbRounds) {
+    public FFSAuthArbitrator(String proverId, String validatorId, int nbRounds, byte[] privateKey) {
 	if (StringUtils.isBlank(proverId) || StringUtils.isBlank(validatorId)) {
 	    throw new IllegalArgumentException("Invalid prover id or validator id");
 	}
-	if (passphrase == null || passphrase.length < 16 || passphrase.length > 256) {
+	if (privateKey == null || privateKey.length < 16 || privateKey.length > 256) {
 	    throw new IllegalArgumentException(
 		    "Invalid passphrase: null or inapropriate lenght (between 16 and 256; 128 and 20148 bits)");
 	}
@@ -99,9 +99,10 @@ public class FFSAuthArbitrator {
 	    this.nbRounds = MAX_NB_ROUNDS;
 	    logger.warn("Invalid number of rounds (" + nbRounds + ") supplied. Using max value " + MAX_NB_ROUNDS);
 	}
+
 	this.proverId = proverId;
 	this.validatorId = validatorId;
-	this.secret = new BigInteger(passphrase);
+	this.privateKey = new BigInteger(privateKey);
 	this.random = new SecureRandom();
     }
 
@@ -127,7 +128,7 @@ public class FFSAuthArbitrator {
 		n = p.multiply(q);
 
 		// Ensure n and secret are coprimes and that n > secret
-		if (n.gcd(secret).equals(BigInteger.ONE) && n.compareTo(secret) == 1) {
+		if (n.gcd(privateKey).equals(BigInteger.ONE) && n.compareTo(privateKey) == 1) {
 		    nMeetsRequirements = true;
 		} else {
 		    n = null;
@@ -137,12 +138,49 @@ public class FFSAuthArbitrator {
 		logger.warn("Unable to find n coprime with supplied passphrase");
 		return null;
 	    }
-	    publicKey = secret.modPow(TWO, n);
+	    publicKey = privateKey.modPow(TWO, n);
 
 	    this.setup = new FFSSetupDTO(proverId, validatorId, this.n.toString(), this.nbRounds,
 		    this.publicKey.toString());
 	}
 	return this.setup;
+    }
+
+    /**
+     * Validates the supplied FFS parameters
+     * 
+     * @param setup
+     * @return
+     */
+    public static boolean validateSetupParameters(FFSSetupDTO setup) {
+	if (StringUtils.isBlank(setup.getProverId()) || StringUtils.isBlank(setup.getValidatorId())) {
+	    return false;
+	}
+	if (setup.getNbRounds() < MIN_NB_ROUNDS || setup.getNbRounds() > MAX_NB_ROUNDS) {
+	    return false;
+	}
+	return validatePublicKey(setup.getN(), setup.getPublicKey());
+
+    }
+
+    /**
+     * Verifies that the public key meets security requirements
+     * 
+     * @param n
+     * @param pubKey
+     * @return
+     */
+    private static boolean validatePublicKey(String nStr, String pubKeyStr) {
+	try {
+	    BigInteger n = new BigInteger(nStr);
+	    BigInteger pubKey = new BigInteger(pubKeyStr);
+	} catch (NumberFormatException e) {
+	    logger.warn("Unable to parse big integer. ", e);
+	    return false;
+	}
+
+	// TODO implement this one day!
+	return true;
     }
 
 }

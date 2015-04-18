@@ -3,7 +3,13 @@ package ca.jp.secproj.crypto.zka.jpake;
 import java.math.BigInteger;
 
 import org.bouncycastle.crypto.agreement.jpake.JPAKERound3Payload;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
+/**
+ * 
+ * @author Jean-Philippe Nantel
+ *
+ */
 public class JPAKERound3PayloadDTO {
 
     private String participantId;
@@ -19,6 +25,7 @@ public class JPAKERound3PayloadDTO {
 	this.macTag = payload.getMacTag().toString();
     }
 
+    @JsonIgnore
     public JPAKERound3Payload createPayload() {
 	return new JPAKERound3Payload(participantId, new BigInteger(macTag));
     }
