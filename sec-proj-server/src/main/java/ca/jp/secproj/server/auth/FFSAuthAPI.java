@@ -87,6 +87,7 @@ public class FFSAuthAPI {
 	}
 	try {
 	    FFSSetupDTO setup = userDb.getFFSSetup(proverId);
+	    setup.setPublicKey(null);
 	    return Response.status(Status.OK).entity(setup).build();
 	} catch (IOException e) {
 	    logger.warn("userdb error: ", e);
