@@ -36,65 +36,65 @@ public class StdAuthDemo implements SecProjExecutable {
 
     public void execute(String username, String password) {
 
-	long start = System.currentTimeMillis();
+        long start = System.currentTimeMillis();
 
-	String authHeader = buildAuthHeader(username, "");
-	String salt = executeGet(serverURL + stdAuthPath + "/initauth", authHeader);
+        String authHeader = buildAuthHeader(username, "");
+        String salt = executeGet(serverURL + stdAuthPath + "/initauth", authHeader);
 
-	String hash = BCrypt.hashpw(password, salt);
+        String hash = BCrypt.hashpw(password, salt);
 
-	String authHeader2 = buildAuthHeader(username, hash);
-	String token = executeGet(serverURL + stdAuthPath + "/checkauth", authHeader2);
+        String authHeader2 = buildAuthHeader(username, hash);
+        String token = executeGet(serverURL + stdAuthPath + "/checkauth", authHeader2);
 
-	long total = System.currentTimeMillis() - start;
+        long total = System.currentTimeMillis() - start;
 
-	logger.info("Authorization V1: salt  fetched on server.");
-	logger.info("Salt: " + salt);
-	logger.info("Hash: " + hash);
-	logger.info("Time: " + total);
+        logger.info("Authorization V1: salt  fetched on server.");
+        logger.info("Salt: " + salt);
+        logger.info("Hash: " + hash);
+        logger.info("Time: " + total);
     }
 
     private String executeGet(String url, String authHeader) {
-	WebResource wr = jerseyClient.resource(url);
-	try {
-	    return wr.header("Authorization", authHeader).get(String.class);
-	} catch (UniformInterfaceException e) {
-	    logger.warn("Error doing get (executeGet)", e);
-	}
-	return null;
+        WebResource wr = jerseyClient.resource(url);
+        try {
+            return wr.header("Authorization", authHeader).get(String.class);
+        } catch (UniformInterfaceException e) {
+            logger.warn("Error doing get (executeGet)", e);
+        }
+        return null;
     }
 
     private String buildAuthHeader(String user, String pw) {
-	try {
-	    return "Basic " + new String(Base64.encode(user + ":" + pw), "UTF-8");
-	} catch (UnsupportedEncodingException e) {
-	    logger.warn("", e);
-	    return null;
-	}
+        try {
+            return "Basic " + new String(Base64.encode(user + ":" + pw), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            logger.warn("", e);
+            return null;
+        }
     }
 
     public String getServerURL() {
-	return serverURL;
+        return serverURL;
     }
 
     public void setServerURL(String serverURL) {
-	this.serverURL = serverURL;
+        this.serverURL = serverURL;
     }
 
     public String getStdAuthPath() {
-	return stdAuthPath;
+        return stdAuthPath;
     }
 
     public void setStdAuthPath(String stdAuthPath) {
-	this.stdAuthPath = stdAuthPath;
+        this.stdAuthPath = stdAuthPath;
     }
 
     public Client getJerseyClient() {
-	return jerseyClient;
+        return jerseyClient;
     }
 
     public void setJerseyClient(Client jerseyClient) {
-	this.jerseyClient = jerseyClient;
+        this.jerseyClient = jerseyClient;
     }
 
 }

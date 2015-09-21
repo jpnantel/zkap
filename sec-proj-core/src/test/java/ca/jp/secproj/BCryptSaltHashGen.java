@@ -13,20 +13,24 @@ public class BCryptSaltHashGen {
     @Test
     public void generateHashAndSaltFromPasswordWithBcrypt() {
 
-	String password = "password";
+        for (int i = 10; i <= 30; i = i + 5) {
 
-	long start = System.currentTimeMillis();
+            String password = "password";
 
-	String salt = BCrypt.gensalt(15);
-	String hash = BCrypt.hashpw(password, salt);
+            long start = System.currentTimeMillis();
 
-	long total = System.currentTimeMillis() - start;
+            String salt = BCrypt.gensalt(i);
+            String hash = BCrypt.hashpw(password, salt);
 
-	Assert.assertNotNull(salt);
-	Assert.assertNotNull(hash);
+            long total = System.currentTimeMillis() - start;
 
-	logger.info("Salt: " + salt);
-	logger.info("Hash: " + hash);
-	logger.info("Time: " + total);
+            Assert.assertNotNull(salt);
+            Assert.assertNotNull(hash);
+
+            logger.info("Nb bcrypt iter: " + i);
+            logger.info("Salt: " + salt);
+            logger.info("Hash: " + hash);
+            logger.info("Time: " + total);
+        }
     }
 }

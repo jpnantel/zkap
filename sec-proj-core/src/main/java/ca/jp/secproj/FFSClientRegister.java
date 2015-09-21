@@ -41,34 +41,34 @@ public class FFSClientRegister implements SecProjExecutable {
 
     public void execute(String username, String password) {
 
-	int nbRounds = 100;
-	MessageDigest md = null;
-	try {
-	    md = MessageDigest.getInstance("SHA-256");
-	} catch (NoSuchAlgorithmException e1) {
-	    logger.error("Can't instantiate SHA-256: ", e1);
-	    return;
-	}
+        int nbRounds = 100;
+        MessageDigest md = null;
+        try {
+            md = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e1) {
+            logger.error("Can't instantiate SHA-256: ", e1);
+            return;
+        }
 
-	try {
-	    md.update(password.getBytes("UTF-8"));
-	} catch (UnsupportedEncodingException e1) {
-	    logger.error("Cannot get bytes as UTF-8 string from supplied password", e1);
-	    return;
-	}
-	byte[] privateKey = md.digest();
+        try {
+            md.update(password.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e1) {
+            logger.error("Cannot get bytes as UTF-8 string from supplied password", e1);
+            return;
+        }
+        byte[] privateKey = md.digest();
 
-	FFSAuthArbitrator arbitrator = new FFSAuthArbitrator(username, serverId, nbRounds, privateKey);
-	FFSSetupDTO setup = arbitrator.GenerateFFSSetup();
+        FFSAuthArbitrator arbitrator = new FFSAuthArbitrator(username, serverId, nbRounds, privateKey);
+        FFSSetupDTO setup = arbitrator.GenerateFFSSetup();
 
-	try {
-	    String authMsg = ConnectionClientHelper.postToServer(jerseyClient, setup, String.class, serverURL + ffsPath
-		    + "/setup");
-	    logger.info("Auth msg: " + authMsg);
-	} catch (IOException e) {
-	    logger.error("Error persisting secret on server. ", e);
-	    return;
-	}
+        try {
+            String authMsg = ConnectionClientHelper.postToServer(jerseyClient, setup, String.class, serverURL + ffsPath
+                    + "/setup");
+            logger.info("Auth msg: " + authMsg);
+        } catch (IOException e) {
+            logger.error("Error persisting secret on server. ", e);
+            return;
+        }
 
     }
 

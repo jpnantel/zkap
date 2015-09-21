@@ -53,8 +53,8 @@ public class FFSAuthAPI {
     private String serverId;
 
     public FFSAuthAPI() {
-	this.ffsValidators = new HashMap<>();
-	this.ffsValidatorsTTL = new HashMap<>();
+        this.ffsValidators = new HashMap<>();
+        this.ffsValidatorsTTL = new HashMap<>();
     }
 
     @Path("/setup")
@@ -66,11 +66,11 @@ public class FFSAuthAPI {
      * @return
      */
     public Response setup(FFSSetupDTO setup) {
-	if (setup == null || !FFSAuthArbitrator.validateSetupParameters(setup)) {
-	    return Response.status(Status.BAD_REQUEST).entity("Invalid FFS setup parameters. ").build();
-	}
-	userDb.setFFSSetup(setup);
-	return Response.status(Status.OK).entity("Successfully registered ffs setup").build();
+        if (setup == null || !FFSAuthArbitrator.validateSetupParameters(setup)) {
+            return Response.status(Status.BAD_REQUEST).entity("Invalid FFS setup parameters. ").build();
+        }
+        userDb.setFFSSetup(setup);
+        return Response.status(Status.OK).entity("Successfully registered ffs setup").build();
     }
 
     @Path("/setup/{proverid}")
@@ -82,20 +82,20 @@ public class FFSAuthAPI {
      * @return
      */
     public Response setup(@PathParam("proverid") String proverId) {
-	if (StringUtils.isBlank(proverId)) {
-	    return Response.status(Status.BAD_REQUEST).entity("Invalid prover id. ").build();
-	}
-	try {
-	    FFSSetupDTO setup = userDb.getFFSSetup(proverId);
-	    setup.setPublicKey(null);
-	    return Response.status(Status.OK).entity(setup).build();
-	} catch (IOException e) {
-	    logger.warn("userdb error: ", e);
-	    return Response
-		    .status(Status.INTERNAL_SERVER_ERROR)
-		    .entity("Exception when retrieving setup. Have you registered before? "
-			    + "Consider calling ~/auth/ffs/setup").build();
-	}
+        if (StringUtils.isBlank(proverId)) {
+            return Response.status(Status.BAD_REQUEST).entity("Invalid prover id. ").build();
+        }
+        try {
+            FFSSetupDTO setup = userDb.getFFSSetup(proverId);
+            setup.setPublicKey(null);
+            return Response.status(Status.OK).entity(setup).build();
+        } catch (IOException e) {
+            logger.warn("userdb error: ", e);
+            return Response
+                    .status(Status.INTERNAL_SERVER_ERROR)
+                    .entity("Exception when retrieving setup. Have you registered before? "
+                            + "Consider calling ~/auth/ffs/setup").build();
+        }
     }
 
     @Path("/challenge")
@@ -103,80 +103,80 @@ public class FFSAuthAPI {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response challenge(FFSRound1DTO r1) {
-	if (r1 == null || StringUtils.isBlank(r1.getProverId())) {
-	    return Response.status(Status.BAD_REQUEST).entity("Invalid FFS witness (round 1) ").build();
-	}
-	FFSSetupDTO setup;
-	try {
-	    setup = userDb.getFFSSetup(r1.getProverId());
-	} catch (IOException e) {
-	    logger.warn("userdb error: ", e);
-	    return Response
-		    .status(Status.INTERNAL_SERVER_ERROR)
-		    .entity("Exception when retrieving setup. Have you registered before? "
-			    + "Consider calling ~/auth/ffs/setup").build();
-	}
-	if (setup == null) {
-	    logger.info("Could not find setup for user: " + r1.getProverId());
-	    return Response
-		    .status(Status.INTERNAL_SERVER_ERROR)
-		    .entity("Unable to retrieve setup. Have you registered before? "
-			    + "Consider calling ~/auth/ffs/setup").build();
-	}
-	FFSValidator validator = new FFSValidator(r1.getProverId(), this.serverId, setup.getN(), setup.getNbRounds(),
-		setup.getPublicKey());
+        if (r1 == null || StringUtils.isBlank(r1.getProverId())) {
+            return Response.status(Status.BAD_REQUEST).entity("Invalid FFS witness (round 1) ").build();
+        }
+        FFSSetupDTO setup;
+        try {
+            setup = userDb.getFFSSetup(r1.getProverId());
+        } catch (IOException e) {
+            logger.warn("userdb error: ", e);
+            return Response
+                    .status(Status.INTERNAL_SERVER_ERROR)
+                    .entity("Exception when retrieving setup. Have you registered before? "
+                            + "Consider calling ~/auth/ffs/setup").build();
+        }
+        if (setup == null) {
+            logger.info("Could not find setup for user: " + r1.getProverId());
+            return Response
+                    .status(Status.INTERNAL_SERVER_ERROR)
+                    .entity("Unable to retrieve setup. Have you registered before? "
+                            + "Consider calling ~/auth/ffs/setup").build();
+        }
+        FFSValidator validator = new FFSValidator(r1.getProverId(), this.serverId, setup.getN(), setup.getNbRounds(),
+                setup.getPublicKey());
 
-	ffsValidators.put(r1.getProverId(), validator);
-	ffsValidatorsTTL.put(r1.getProverId(), System.currentTimeMillis() + FFS_VALIDATOR_TTL);
+        ffsValidators.put(r1.getProverId(), validator);
+        ffsValidatorsTTL.put(r1.getProverId(), System.currentTimeMillis() + FFS_VALIDATOR_TTL);
 
-	FFSRound2DTO r2 = validator.generateChallenge(r1);
-	if (r2 == null) {
-	    logger.info("Error while generating challenge. ");
-	    return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Error while generating challenge. ").build();
-	}
-	return Response.status(Status.OK).entity(r2).build();
+        FFSRound2DTO r2 = validator.generateChallenge(r1);
+        if (r2 == null) {
+            logger.info("Error while generating challenge. ");
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Error while generating challenge. ").build();
+        }
+        return Response.status(Status.OK).entity(r2).build();
     }
 
     @Path("/validate")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response validate(FFSRound3DTO r3) {
-	if (r3 == null || StringUtils.isBlank(r3.getProverId())) {
-	    return Response.status(Status.BAD_REQUEST).entity("Invalid FFS witness (round 3) ").build();
-	}
-	FFSValidator validator = ffsValidators.get(r3.getProverId());
-	if (validator == null) {
-	    logger.info("FFSValidator object not found. ");
-	    return Response.status(Status.INTERNAL_SERVER_ERROR).entity("FFSValidator object not found. ").build();
-	}
-	Long ttl = ffsValidatorsTTL.get(r3.getProverId());
-	if (ttl == null || System.currentTimeMillis() > ttl) {
-	    logger.info("FFSValidator object expired. ");
-	    return Response.status(Status.INTERNAL_SERVER_ERROR).entity("FFSValidator object expired. ").build();
-	}
+        if (r3 == null || StringUtils.isBlank(r3.getProverId())) {
+            return Response.status(Status.BAD_REQUEST).entity("Invalid FFS witness (round 3) ").build();
+        }
+        FFSValidator validator = ffsValidators.get(r3.getProverId());
+        if (validator == null) {
+            logger.info("FFSValidator object not found. ");
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity("FFSValidator object not found. ").build();
+        }
+        Long ttl = ffsValidatorsTTL.get(r3.getProverId());
+        if (ttl == null || System.currentTimeMillis() > ttl) {
+            logger.info("FFSValidator object expired. ");
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity("FFSValidator object expired. ").build();
+        }
 
-	if (validator.authenticate(r3)) {
-	    return Response.status(Status.OK).entity("You successfully identified yourself buddy! ").build();
-	} else {
-	    logger.info("FFSValidator object expired. ");
-	    return Response.status(Status.UNAUTHORIZED).entity("Authentication failed. ").build();
-	}
+        if (validator.authenticate(r3)) {
+            return Response.status(Status.OK).entity("You successfully identified yourself buddy! ").build();
+        } else {
+            logger.info("FFSValidator object expired. ");
+            return Response.status(Status.UNAUTHORIZED).entity("Authentication failed. ").build();
+        }
     }
 
     public IUserDb getUserDb() {
-	return userDb;
+        return userDb;
     }
 
     public void setUserDb(IUserDb userDb) {
-	this.userDb = userDb;
+        this.userDb = userDb;
     }
 
     public String getServerId() {
-	return serverId;
+        return serverId;
     }
 
     public void setServerId(String serverId) {
-	this.serverId = serverId;
+        this.serverId = serverId;
     }
 
 }

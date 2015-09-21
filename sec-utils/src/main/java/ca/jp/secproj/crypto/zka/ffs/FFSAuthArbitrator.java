@@ -87,7 +87,7 @@ public class FFSAuthArbitrator {
 	}
 	if (privateKey == null || privateKey.length < 16 || privateKey.length > 256) {
 	    throw new IllegalArgumentException(
-		    "Invalid passphrase: null or inapropriate lenght (between 16 and 256; 128 and 20148 bits)");
+		    "Invalid passphrase: null or inapropriate lenght (between 16 and 256; 128 and 2048 bits)");
 	}
 
 	if (nbRounds > MIN_NB_ROUNDS && nbRounds < MAX_NB_ROUNDS) {
